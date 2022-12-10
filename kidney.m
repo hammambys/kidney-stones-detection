@@ -3,10 +3,10 @@ function kidney()
     clear all
     close all
     warning off
-    %[filename, pathname]=uigetfile('*.*', 'Pick a MATLAB code file');
-    %filename=strcat(pathname,filename);
-    %original=imread(filename);
-    original=imread('stone2.jpg');
+    [filename, pathname]=uigetfile('*.*', 'Pick a MATLAB code file');
+    filename=strcat(pathname,filename);
+    original=imread(filename);
+    %original=imread('stone2.jpg');
     
     imshow(original);
     title('original');
@@ -56,12 +56,24 @@ function kidney()
     imshow(uo);
     title('reconvert image to grayscale');
 
-    mo=medfilt2(uo,[5 5]);
+    %mo=medfilt2(uo,[5 5]);
+    %figure;
+    %imshow(mo);
+    %title('apply median filter');
+    
+    nb_iter=1
+    se = strel('disk',1);
+    for i=0:1:nb_iter
+        afterOpening = imopen(uo,se);
+        afterClosing = imclose(afterOpening,se);
+    end
+    rm_noise=afterClosing;
     figure;
-    imshow(mo);
-    title('apply median filter');
+    imshow(rm_noise);
+    title('appliquer filter alterné sequentiel pour reduire le bruit');
 
-    po=mo>250;
+    
+    po=rm_noise>245;
     figure;
     imshow(po);
     title('get white areas only');

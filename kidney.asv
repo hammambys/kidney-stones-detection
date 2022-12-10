@@ -3,10 +3,10 @@ function kidney()
     clear all
     close all
     warning off
-    %[filename, pathname]=uigetfile('*.*', 'Pick a MATLAB code file');
-    %filename=strcat(pathname,filename);
-    %original=imread(filename);
-    original=imread('stone2.jpg');
+    [filename, pathname]=uigetfile('*.*', 'Pick a MATLAB code file');
+    filename=strcat(pathname,filename);
+    original=imread(filename);
+    %original=imread('stone2.jpg');
     
     imshow(original);
     title('original');
@@ -46,7 +46,6 @@ function kidney()
     title('apply mask to image');
     
     
-
     PreprocessedImage=imadjust(PreprocessedImage,[0.3 0.7],[])+50;
     figure;
     imshow(PreprocessedImage);
@@ -57,10 +56,20 @@ function kidney()
     imshow(uo);
     title('reconvert image to grayscale');
 
-    mo=medfilt2(uo,[5 5]);
+    %mo=medfilt2(uo,[5 5]);
+    %figure;
+    %imshow(mo);
+    %title('apply median filter');
+    
+    nb_iter=2
+    se = strel('disk',5);
+    for i=0:1:nb_iter
+        
+    removed_noise=medfilt2(uo,[5 5]);
+    
     figure;
-    imshow(mo);
-    title('apply median filter');
+    imshow(removed_noise);
+    title('appliquer filter alterné sequentiel pour reduire le bruit');
 
     po=mo>250;
     figure;
@@ -68,7 +77,7 @@ function kidney()
     title('get white areas only');
     
     % Remove objects greater than m pixels in area from image I.
-    stones = po - bwareaopen(po, 200); %remove object bigger than 200 pixel
+    stones = po - bwareaopen(po, 200); %remove object bigger than 200 pixels
     figure;
     imshow(stones);
     title('remove big objects');
